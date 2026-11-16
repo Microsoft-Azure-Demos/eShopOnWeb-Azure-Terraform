@@ -1,0 +1,47 @@
+[
+  {
+    "name": "ASPNETCORE_ENVIRONMENT",
+    "value": "Docker",
+    "slotSetting": false
+  },
+  {
+    "name": "ASPNETCORE_URLS",
+    "value": "http://+:8080",
+    "slotSetting": false
+  },
+  {
+    "name": "Authentication__Jwt__SigningKey",
+    "value": "@Microsoft.KeyVault(SecretUri=https://eshopdevkva12b25.vault.azure.net/secrets/jwt-signing-key)",
+    "slotSetting": false
+  },
+  {
+    "name": "baseUrls__webBase",
+    "value": "https://eshop-dev-webmvc-aagwfqhxbwcae6gd.westus3-01.azurewebsites.net/",
+    "slotSetting": false
+  },
+  {
+    "name": "ConnectionStrings__CatalogConnection",
+    "value": "Server=tcp:eshop-dev-sql-server.database.windows.net,1433;Initial Catalog=CatalogDb;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;Authentication=Active Directory Managed Identity;",
+    "slotSetting": false
+  },
+  {
+    "name": "ConnectionStrings__IdentityConnection",
+    "value": "Server=tcp:eshop-dev-sql-server.database.windows.net,1433;Initial Catalog=IdentityDb;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;Authentication=Active Directory Managed Identity;",
+    "slotSetting": false
+  },
+  {
+    "name": "ImageBaseUrl",
+    "value": "https://eshopdevstorage.blob.core.windows.net/",
+    "slotSetting": false
+  },
+  {
+    "name": "WEBSITES_ENABLE_APP_SERVICE_STORAGE",
+    "value": "false",
+    "slotSetting": false
+  },
+  {
+    "name": "WEBSITES_PORT",
+    "value": "8080",
+    "slotSetting": false
+  }
+]

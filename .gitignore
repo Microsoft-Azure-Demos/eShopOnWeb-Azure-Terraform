@@ -1,0 +1,50 @@
+# Terraform working directory
+**/.terraform/*
+
+# Terraform state files
+*.tfstate
+*.tfstate.*
+*.tfstate.backup
+
+# Terraform crash logs
+crash.log
+crash.*.log
+
+# Terraform variable files (may contain sensitive values)
+*.tfvars
+*.tfvars.json
+!terraform.tfvars.example
+
+# Override files
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Terraform CLI configuration
+.terraformrc
+terraform.rc
+
+# Sensitive credentials and environment files
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Azure CLI credentials and local configuration
+.azure/
+
+# Operating system files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor and IDE files
+.vscode/
+.idea/
+
+# Temporary and log files
+*.log
+tmp/
+temp/
