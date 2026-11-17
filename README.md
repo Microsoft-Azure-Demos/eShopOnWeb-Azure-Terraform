@@ -87,14 +87,14 @@ eShopOnWeb-Azure-Terraform/
 │   ├── screenshot/
 │   │
 │   ├── 1.Configuring-Bootstrapping-Terraform-Remote-State-Infrastructure.md
-│   ├── 2.terraform-remote-state-setup.md.md
+│   ├── 2.terraform-remote-state-setup.md
 │   ├── 3.key-vault-setup.md
-│   ├── 4.deploy-infrastructure.md.md
+│   ├── 4.deploy-infrastructure.md
 │   ├── 5.sql-database-permissions.md
 │   ├── 6.verify-resources-deployed.md
-│   ├── 7.login-failed-error-resolutions.md.md
+│   ├── 7.login-failed-error-resolutions.md
 │   ├── 8.managing-infrastructure-changes.md
-│   
+│   └── README.md
 │
 ├── environments/
 │   ├── infrastructure/
@@ -107,6 +107,7 @@ eShopOnWeb-Azure-Terraform/
 │   ├── app-service/
 │   └── sql-database/
 │
+├── .gitignore
 ├── .terraform.lock.hcl
 └── README.md
 ```
@@ -148,20 +149,23 @@ The main infrastructure configuration consumes the separately managed Key Vault 
 
 ### Documentation
 
-The `documentation/` directory contains the deployment guides:
+The [`documentation/`](./documentation/) directory contains the deployment guides:
 
-1. Bootstrapping Terraform remote state infrastructure.
-2. Configuring Terraform remote state.
-3. Deploying Azure Key Vault.
-4. Provisioning the main infrastructure.
-5. Configuring SQL database permissions.
-6. Verifying deployed resources.
-7. Troubleshooting database authentication errors.
-8. Managing infrastructure changes.
+1. [Bootstrapping Terraform remote state infrastructure](./documentation/1.Configuring-Bootstrapping-Terraform-Remote-State-Infrastructure.md)
+2. [Configuring Terraform remote state](./documentation/2.terraform-remote-state-setup.md)
+3. [Deploying Azure Key Vault](./documentation/3.key-vault-setup.md)
+4. [Provisioning the main infrastructure](./documentation/4.deploy-infrastructure.md)
+5. [Configuring SQL database permissions](./documentation/5.sql-database-permissions.md)
+6. [Verifying deployed resources](./documentation/6.verify-resources-deployed.md)
+7. [Troubleshooting database authentication errors](./documentation/7.login-failed-error-resolutions.md)
+8. [Managing infrastructure changes](./documentation/8.managing-infrastructure-changes.md)
 
-The `documentation/app-settings/` directory contains separate JSON configuration files for the Web MVC and Public API applications.
+The [`documentation/app-settings/`](./documentation/app-settings/) directory contains separate JSON configuration files for the Web MVC and Public API applications:
 
-The `documentation/screenshot/` directory contains visual evidence of the deployed infrastructure and application.
+- [Web MVC application settings](./documentation/app-settings/webmvc-app-settings.json)
+- [Public API application settings](./documentation/app-settings/publicapi-app-settings.json)
+
+The [`documentation/screenshot/`](./documentation/screenshot/) directory contains visual evidence of the deployed infrastructure and application.
 
 ## 4. Security and Authentication
 
@@ -262,7 +266,7 @@ For example:
 - Image files can be replaced with other catalog images.
 - Application settings are maintained separately from reusable Terraform module logic.
 
-The JSON application settings files are located in `documentation/app-settings/`. This approach separates reusable infrastructure logic from application-specific configuration, making the Terraform modules easier to reuse and maintain.
+The JSON application settings files are located in [`documentation/app-settings/`](./documentation/app-settings/). This approach separates reusable infrastructure logic from application-specific configuration, making the Terraform modules easier to reuse and maintain.
 
 ## 6. Deployment Guide
 
@@ -290,7 +294,7 @@ This includes the Resource Group, Storage Account, blob container, and required 
 
 Follow the instructions in:
 
-`documentation/1.Configuring-Bootstrapping-Terraform-Remote-State-Infrastructure.md`
+[1. Configuring and bootstrapping Terraform remote state infrastructure](./documentation/1.Configuring-Bootstrapping-Terraform-Remote-State-Infrastructure.md)
 
 ### Step 2 – Configure Terraform Remote State
 
@@ -300,7 +304,7 @@ Each configuration uses its own state key to keep its state independent.
 
 Follow the instructions in:
 
-`documentation/2.terraform-remote-state-setup.md`
+[2. Configuring Terraform remote state](./documentation/2.terraform-remote-state-setup.md)
 
 ### Step 3 – Provision Azure Key Vault
 
@@ -308,7 +312,7 @@ Deploy the persistent Key Vault infrastructure and configure the JWT signing key
 
 Follow the instructions in:
 
-`documentation/3.key-vault-setup.md`
+[3. Deploying Azure Key Vault](./documentation/3.key-vault-setup.md)
 
 ### Step 4 – Provision the Main Infrastructure
 
@@ -327,8 +331,7 @@ Copy the returned Object ID and assign it to `sql_entra_admin_object_id` in `ter
 
 Once the configuration is updated, follow the deployment instructions in:
 
-`./documentation/4.deploy-infrastructure.md`
-`
+[4. Deploying the main infrastructure](./documentation/4.deploy-infrastructure.md)
 
 ### Step 5 – Configure Database Permissions
 
@@ -336,7 +339,7 @@ Configure SQL database users and permissions for the Web MVC and Public API Mana
 
 Follow the instructions in:
 
-`documentation/5.sql-database-permissions.md`
+[5. Configuring SQL database permissions](./documentation/5.sql-database-permissions.md)
 
 ### Step 6 – Verify the Deployment
 
@@ -344,7 +347,7 @@ Verify that the Azure resources have been deployed and that the application endp
 
 Follow the instructions in:
 
-`documentation/6.verify-resources-deployed.md`
+[6. Verifying deployed resources](./documentation/6.verify-resources-deployed.md)
 
 ## 7. Issues Encountered and Resolutions
 
@@ -357,9 +360,23 @@ The application logs showed:
 ```text
 Login failed for user '<token-identified principal>'.
 ```
+
+The issue was traced to a mismatch between the SID associated with the database users created through the provider and the authoritative Microsoft Entra identity SID.
+
+**Resolution:** The affected database users were removed and recreated using native Azure SQL commands:
+
+```sql
+CREATE USER [eshop-dev-webmvc] FROM EXTERNAL PROVIDER;
+CREATE USER [eshop-dev-publicapi] FROM EXTERNAL PROVIDER;
+```
+
+The required database roles were then assigned to the recreated users.
+
+This was performed in both `CatalogDb` and `IdentityDb`.
+
 Detailed troubleshooting and recovery steps are documented in:
 
-`documentation/7.login-failed-error-resolutions.md`
+[7. Troubleshooting database authentication errors](./documentation/7.login-failed-error-resolutions.md)
 
 **Automation consideration:** To avoid the SID mismatch encountered with the provider, database user creation can be automated using a `terraform_data` resource with a `local-exec` provisioner that executes native SQL commands using an authenticated Azure CLI access token. Such automation should be implemented with appropriate execution, permission, and state-management considerations.
 
@@ -380,7 +397,7 @@ terraform state show <RESOURCE_ADDRESS>
 
 Follow the detailed instructions in:
 
-`documentation/8.managing-infrastructure-changes.md`
+[8. Managing infrastructure changes](./documentation/8.managing-infrastructure-changes.md)
 
 ## 9. Security Considerations
 
@@ -417,9 +434,7 @@ Follow the detailed instructions in:
 
 ## 11. Screenshots
 
-Screenshots documenting the deployed infrastructure and application are available in:
-
-`documentation/screenshot/`
+Screenshots documenting the deployed infrastructure and application are available in the [`documentation/screenshot/`](./documentation/screenshot/) directory.
 
 ## 12. Project Goals and Learning Outcomes
 
